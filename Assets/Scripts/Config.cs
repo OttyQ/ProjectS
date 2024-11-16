@@ -21,4 +21,8 @@ public class Config : ScriptableObject
     [SerializeField] private float _goldSpawnChance = 0.2f;
 
     public float goldSpawnChance => _goldSpawnChance;
+
+    [SerializeField] private float _goldSpawnChanceIncrement = 0.1f;
+
+    public float goldSpawnChanceIncrement => _goldSpawnChanceIncrement;
 }
