@@ -3,15 +3,11 @@ using UnityEngine;
 
 public class GameConfigProvider : MonoBehaviour
 {
-   
     public static GameConfigProvider instance;
-
-    
     private Config _gameConfig;
 
     private void Awake()
     {
-        
         if (instance != null && instance != this)
         {
             Destroy(gameObject); 
@@ -22,7 +18,6 @@ public class GameConfigProvider : MonoBehaviour
             DontDestroyOnLoad(gameObject); 
         }
 
-        
         _gameConfig = Resources.Load<Config>("GameConfig");
 
         if (_gameConfig == null)
@@ -30,7 +25,5 @@ public class GameConfigProvider : MonoBehaviour
             Debug.LogError("GameConfig is missing in Resources folder!");
         }
     }
-
-    
     public Config GameConfig => _gameConfig;
 }

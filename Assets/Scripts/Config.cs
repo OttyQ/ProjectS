@@ -5,7 +5,7 @@ public class Config : ScriptableObject
 {
     [Header("Game Settings")]
     [SerializeField] private int _fieldSize = 3; 
-    public int FieldSize => _fieldSize;
+    public int fieldSize => _fieldSize;
 
     [SerializeField] private int _maxDepth = 3;
     public int maxDepth => _maxDepth;

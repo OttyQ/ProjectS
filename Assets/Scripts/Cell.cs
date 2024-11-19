@@ -7,18 +7,24 @@ using UnityEngine.UI;
 
 public class Cell : MonoBehaviour, IPointerClickHandler
 {
+
+    public event Func<Transform, bool> OnGoldDigged;
+    
+    public event Action OnDigged;
+
     private int _depth;
     private int _curDepth;
-    private bool _CellOnGold = false;
+    private bool _hasGold = false;
 
-    private Image _cellImage;
-    public event Action<Cell> OnGoldDigged;
+    private RewardItem _rewardItemOnCell;
+    private CellRenderer _cellRenderer;
+    private CountHandler _countHandler;
 
-    private void Start()
+
+    public void Initialize(int depth,CountHandler countHandler )
     {
-        _depth = GameConfigProvider.instance.GameConfig.maxDepth;
-        _curDepth = _depth;
-        _cellImage = GetComponent<Image>();
+        _depth = depth;
+        _countHandler = countHandler;
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -26,30 +32,52 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         Dig();
     }
 
-    private void Dig()
+    private void Start()
     {
-        if (_CellOnGold || _curDepth == 0) return;
-
-        _curDepth--;
-        Debug.Log("Current depth" + _depth);
-        UpdateCellColor();
-        OnGoldDigged?.Invoke(this);  // Сообщаем, что клетка была выкопана
+        _curDepth = _depth;
+        _cellRenderer = GetComponent<CellRenderer>();
+        _cellRenderer?.Initialize(_depth, _curDepth);
     }
-
-    private void UpdateCellColor()
+    private void OnDisable()
     {
-        if (_cellImage != null)
+        if (_rewardItemOnCell != null)
         {
-            //заменить 3 на какой-нибудь maxDepth
-            float brightness = Mathf.InverseLerp(0, _depth, _curDepth);
-            _cellImage.color = new Color(brightness, brightness, brightness);
+            _rewardItemOnCell.onGoldSpawned -= GoldAppear;
+            _rewardItemOnCell.onGoldRemoved -= GoldRemoved;
         }
     }
 
-    public void SetGold()
+    private void Dig()
     {
-        _CellOnGold = true;
-        Debug.Log("Gold is now in this cell!");
+        if (_hasGold || _curDepth == 0 || _countHandler.GetRemainingShovels() == 0) return;
+        _curDepth--;
+        Debug.Log("Current depth" + _curDepth);
+        _cellRenderer?.UpdateColor(_curDepth);
+        
+        if ((bool)(OnGoldDigged?.Invoke(this.transform)))// Сообщаем, что клетка была выкопана
+        {
+            _rewardItemOnCell = GetComponentInChildren<RewardItem>();
+            if (_rewardItemOnCell != null)
+            {
+                _rewardItemOnCell.onGoldSpawned += GoldAppear;
+                _rewardItemOnCell.onGoldRemoved += GoldRemoved;
+            }
+        }
+        OnDigged?.Invoke();
+    }
+
+    
+    private void GoldRemoved()
+    {
+        
+        _hasGold = false;
+        Debug.Log("Золото было убрано!");
+    }
+    
+    private void GoldAppear()
+    {
+        _hasGold = true;
+        Debug.Log("Золото появилось на клетке!");
     }
 }
 
