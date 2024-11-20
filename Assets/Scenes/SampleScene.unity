@@ -1765,6 +1765,7 @@ GameObject:
   - component: {fileID: 1918216402}
   - component: {fileID: 1918216403}
   - component: {fileID: 1918216405}
+  - component: {fileID: 1918216406}
   - component: {fileID: 1918216398}
   m_Layer: 0
   m_Name: GameManager
@@ -1820,7 +1821,7 @@ MonoBehaviour:
   gridParent: {fileID: 2021749148}
   goldPrefab: {fileID: 3968957020742158312, guid: 55f99cc60913dc64cae4113c1706a0c1, type: 3}
   bag: {fileID: 0}
-  gameState: {fileID: 0}
+  gameState: {fileID: 1918216405}
 --- !u!114 &1918216401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1881,6 +1882,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8fa6318188f40aa4f9202bc8576ecf53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1918216406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1918216397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0e4e1fbad06584aac1afbbb2807f08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2021749147

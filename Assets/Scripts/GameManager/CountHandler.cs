@@ -9,18 +9,20 @@ public class CountHandler : MonoBehaviour
     public event Action AllRewardCollected;                   
 
     private int _countShovels;                               
-    private int _collectedRewards;                           
+    private int _collectedRewards = 0;                           
     private int _requiredRewards;                            
 
-    public void Initialize(int countShovels, int requiredRewards)
+    public void Initialize(int countShovels,int requiredRewards, int collectedRewards = 0)
     {
         _countShovels = countShovels;
         _requiredRewards = requiredRewards;
-        _collectedRewards = 0;
+        _collectedRewards = collectedRewards;
+    }
 
+    public void UpdateView()
+    {
         OnShovelCountChanged?.Invoke(_countShovels);
         OnRewardCountChanged?.Invoke(_collectedRewards, _requiredRewards);
-        Debug.Log("Intit params CountHandler: Shovels: " +  _countShovels + " ReqRewards: " + requiredRewards);
     }
 
     public void UseShovel()

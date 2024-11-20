@@ -1,10 +1,11 @@
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class GoldSpawner : IGoldSpawner
 {
 
-    public event Action<RewardItem, Transform> OnGoldSpawned;
+    //public event Action<RewardItem, Transform> OnGoldSpawned;
     private GameObject _goldPrefab;
 
     public GoldSpawner(GameObject goldPrefab)
@@ -16,31 +17,26 @@ public class GoldSpawner : IGoldSpawner
     {
         if (_goldPrefab != null)
         {
-            
+            Debug.Log("GoldSpawner start gold spawn! Transform cell: " + cell);
+
+            // Создаем золото на позиции клетки (используем мировую позицию)
             GameObject gold = UnityEngine.Object.Instantiate(_goldPrefab, cell.position, Quaternion.identity);
-            gold.transform.SetParent(cell, false);
 
-            RectTransform cellRectTransform = cell.GetComponent<RectTransform>();
-            RectTransform goldRectTransform = gold.GetComponent<RectTransform>();
-            RewardItem rewardItem = gold.GetComponent<RewardItem>();
-            OnGoldSpawned?.Invoke(rewardItem, cell);
+            // Настроим золото как дочерний объект клетки, чтобы оно следовало за ней
+            gold.transform.SetParent(cell); // Прикрепляем золото к клетке, чтобы оно двигалось вместе с ней
 
-            if (cellRectTransform != null && goldRectTransform != null)
-            {
-                float scaleFactor = 0.5f; // Коэффициент размера золота, чтобы оно было меньше клетки (80% от размера)
+            // Если ты не хочешь использовать RectTransform для размера и центрирования, можешь использовать обычный Transform:
+            // Устанавливаем произвольный размер золота
+            gold.transform.localScale = Vector3.one * 0.5f; // Например, уменьшение размера до 50% от стандартного размера
 
-                // Подгоняем золото под уменьшенный размер клетки
-                goldRectTransform.sizeDelta = cellRectTransform.sizeDelta * scaleFactor;
-                goldRectTransform.anchorMin = new Vector2(0.5f, 0.5f); // Центрируем золото
-                goldRectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                goldRectTransform.anchoredPosition = Vector2.zero; // Ставим золото по центру
-            }
-            Debug.Log("Hello from GoldSpawner! Gold was spawned");
+            Debug.Log("Gold spawned at position: " + gold.transform.position);
         }
         else
         {
             Debug.LogWarning("Gold prefab is not assigned!");
         }
     }
+
+
 }
 

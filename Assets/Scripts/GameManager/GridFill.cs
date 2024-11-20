@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class GridFill:MonoBehaviour
+public class GridFill : MonoBehaviour
 {
     private Transform gridParent;
     private GameObject cellPrefab;
     private int _maxDepth;
     private CountHandler _countHandler;
-    
-    private List<GameObject> cells = new List<GameObject>();
+
+    List<Cell> cells = new List<Cell>();
 
     public void Initialize(Transform gridParent, GameObject cellPrefab, int maxDepth, CountHandler countHandler)
     {
@@ -24,11 +25,11 @@ public class GridFill:MonoBehaviour
         ClearGrid();
         for (int i = 0; i < fieldSize * fieldSize; i++)
         {
-           GameObject cellObject = Instantiate(cellPrefab, gridParent);
-           Cell cell = cellObject.GetComponent<Cell>();
-           cell.OnDigged += _countHandler.UseShovel;
-           cell.Initialize(_maxDepth, _countHandler);
-           cells.Add(cellObject);
+            GameObject cellObject = Instantiate(cellPrefab, gridParent);
+            Cell cell = cellObject.GetComponent<Cell>();
+            cell.OnDigged += _countHandler.UseShovel;
+            cell.Initialize(_maxDepth,_maxDepth, _countHandler, false);
+            cells.Add(cell);   
         }
     }
 
@@ -36,9 +37,71 @@ public class GridFill:MonoBehaviour
     {
         foreach (var cell in cells)
         {
-            Destroy(cell);
+            Destroy(cell.gameObject);
         }
         cells.Clear();
+    }
+
+    public void InitializeGridFromData(List<CellData> cellDataList, RewardManager rewardManager)
+    {
+        ClearGrid();
+
+        if (cellDataList != null && cellDataList.Count > 0)
+        {
+            for (int i = 0; i < cellDataList.Count; i++)
+            {
+                CellData cellData = cellDataList[i];
+                GameObject cellObject = Instantiate(cellPrefab, gridParent);
+                Cell cell = cellObject.GetComponent<Cell>();
+                cell.Initialize(_maxDepth, cellData.depth, _countHandler, cellData.hasGold);
+                cell.OnDigged += _countHandler.UseShovel;
+
+                // Добавляем клетку в список
+                Debug.Log($"From GridFill InitGrid cell num{i} transform: {cell.transform.position}");
+                cells.Add(cell);
+            }
+
+            // Теперь запускаем процесс спауна золота для клеток, где оно нужно
+        }
+        else
+        {
+            Debug.LogWarning("No cell data to initialize");
+        }
+    }
+
+    public void DataGridSpawnGold(RewardManager rewardManager)
+    {
+        // Находим все клетки в сцене
+        Cell[] cellsInScene = FindObjectsOfType<Cell>();
+
+        // Проходим по клеткам и спауним золото, если оно должно быть там
+        foreach (Cell cell in cellsInScene)
+        {
+            if (cell.HasGold())
+            {
+               
+                Debug.Log("Cell transform from DataGridSpawnGold: " + cell.transform);
+                rewardManager.HandleGoldSpawn(cell.transform);
+
+                // Присваиваем золото клетке
+                cell.AssignGold();
+            }
+        }
+    }
+
+    public List<CellData> GetCellsData()
+    {
+        List<CellData> cellDataList = new List<CellData>();
+
+        foreach (var cell in cells)
+        {
+            bool hasGold = cell.HasGold();  // Проверяем, есть ли золото в клетке
+            int depth = cell.GetDepth();    // Получаем глубину клетки
+
+            cellDataList.Add(new CellData(depth, hasGold)); // Сохраняем данные клетки
+        }
+
+        return cellDataList;
     }
 }
 

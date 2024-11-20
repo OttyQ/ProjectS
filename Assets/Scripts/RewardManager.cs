@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 
 public class RewardManager : MonoBehaviour
@@ -41,7 +40,6 @@ public class RewardManager : MonoBehaviour
         foreach (var cell in cells)
         {
             cell.OnGoldDigged -= TrySpawnGold;  // Отписка от событие копки
-           
         }
     }
     private bool TrySpawnGold(Transform cell)
@@ -73,9 +71,10 @@ public class RewardManager : MonoBehaviour
         Debug.Log("Reset spawn chance to def! It now: " + _spawnChance);
     }
 
-    public IGoldSpawner GetGoldSpawner()
+    public void HandleGoldSpawn(Transform cell)
     {
-        return _goldSpawner;
+        Debug.Log("Handle spawn gold!");
+        _goldSpawner.SpawnGoldObject(cell);
     }
 }
 

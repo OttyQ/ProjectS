@@ -21,10 +21,14 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     private CountHandler _countHandler;
 
 
-    public void Initialize(int depth,CountHandler countHandler )
+    public void Initialize(int maxDepth,int curDepth ,CountHandler countHandler, bool hasGold)
     {
-        _depth = depth;
+        _depth = maxDepth;
+        _curDepth = curDepth;
+        _hasGold = hasGold;
         _countHandler = countHandler;
+        _cellRenderer = GetComponent<CellRenderer>();
+        _cellRenderer?.Initialize(_depth, _curDepth);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -34,9 +38,8 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
     private void Start()
     {
-        _curDepth = _depth;
-        _cellRenderer = GetComponent<CellRenderer>();
-        _cellRenderer?.Initialize(_depth, _curDepth);
+        _cellRenderer?.UpdateColor(_curDepth);
+
     }
     private void OnDisable()
     {
@@ -56,12 +59,7 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         
         if ((bool)(OnGoldDigged?.Invoke(this.transform)))// Сообщаем, что клетка была выкопана
         {
-            _rewardItemOnCell = GetComponentInChildren<RewardItem>();
-            if (_rewardItemOnCell != null)
-            {
-                _rewardItemOnCell.onGoldSpawned += GoldAppear;
-                _rewardItemOnCell.onGoldRemoved += GoldRemoved;
-            }
+            AssignGold();
         }
         OnDigged?.Invoke();
     }
@@ -78,6 +76,26 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     {
         _hasGold = true;
         Debug.Log("Золото появилось на клетке!");
+    }
+
+    public bool HasGold()
+    {
+        return _hasGold;
+    }
+
+    public int GetDepth()
+    {
+        return _curDepth;
+    }
+
+    public void AssignGold()
+    {
+        _rewardItemOnCell = GetComponentInChildren<RewardItem>();
+        if (_rewardItemOnCell != null)
+        {
+            _rewardItemOnCell.onGoldSpawned += GoldAppear;
+            _rewardItemOnCell.onGoldRemoved += GoldRemoved;
+        }
     }
 }
 
