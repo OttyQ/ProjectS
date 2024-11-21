@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 612f793df3a14424d8f561855f0b5cb0, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  _fieldSize: 4
-  _maxDepth: 5
-  _initialShovelCount: 10
-  _requiredGoldBars: 4
-  _goldSpawnChance: 0.2
+  _fieldSize: 6
+  _maxDepth: 4
+  _initialShovelCount: 20
+  _requiredGoldBars: 10
+  _goldSpawnChance: 0.3
   _goldSpawnChanceIncrement: 0.1

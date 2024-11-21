@@ -7,19 +7,28 @@ public class View : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI rewardCounterText;
     [SerializeField] private TextMeshProUGUI shovelCounterText;
-    //[SerializeField] private GameObject winMenu;
 
     public void UpdateRewardCount(int rewardsCollected, int requiredRewards)
     {
-        rewardCounterText.text = $"{rewardsCollected}/{requiredRewards}";
+        if(rewardCounterText != null)
+        {
+            rewardCounterText.text = $"{rewardsCollected}/{requiredRewards}";
+        }
+        else
+        {
+            Debug.LogWarning("RewardCounterText is not assigned in the inspector!");
+        }
     }
     public void UpdateShovelCount(int shovelsRemaining)
     {
-        shovelCounterText.text = shovelsRemaining.ToString();
+        if (shovelCounterText != null)
+        {
+            shovelCounterText.text = shovelsRemaining.ToString();
+        }
+        else
+        {
+            Debug.LogWarning("ShovelCounterText is not assigned in the inspector!");
+        }
     }
-    //public void ShowWinMenu()
-    //{
-    //    winMenu.SetActive(true);
-    //}
-
+ 
 }

@@ -12,7 +12,7 @@ public class UIBag : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log("Hello! I'm dropHandler from UIBag. I work!");
+        Debug.Log("Bag OnDrop activate");
         var droppedItem = eventData.pointerDrag.GetComponent<RewardItem>();
         if(droppedItem != null)
         {

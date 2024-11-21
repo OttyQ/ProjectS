@@ -12,18 +12,27 @@ public class GameState: MonoBehaviour
 
     public void Initialize(WinMenu winMenu, CountHandler countHandler)
     {
+        if (winMenu == null || countHandler == null)
+        {
+            Debug.LogError("GameState initialization failed: winMenu or countHandler is null.");
+            return;
+        }
+
         this.winMenu = winMenu;
         this.countHandler = countHandler;
+        Debug.Log("GameState successfully initialized.");
     }
 
     public void Win()
     {
+        Debug.Log("Player has won the game.");
         winMenu.Setup(countHandler.GetCollectedRewards());
         winMenu.gameObject.SetActive(true);
     }
 
     public void RestartGame()
     {
+        Debug.Log("Restarting the game.");
         winMenu.gameObject.SetActive(false);
         OnGameRestart?.Invoke();
     }

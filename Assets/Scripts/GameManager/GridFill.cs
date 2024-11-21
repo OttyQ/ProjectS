@@ -27,7 +27,7 @@ public class GridFill : MonoBehaviour
         {
             GameObject cellObject = Instantiate(cellPrefab, gridParent);
             Cell cell = cellObject.GetComponent<Cell>();
-            cell.OnDigged += _countHandler.UseShovel;
+            cell.OnCellDigged += _countHandler.UseShovel;
             cell.Initialize(_maxDepth,_maxDepth, _countHandler, false);
             cells.Add(cell);   
         }
@@ -54,14 +54,10 @@ public class GridFill : MonoBehaviour
                 GameObject cellObject = Instantiate(cellPrefab, gridParent);
                 Cell cell = cellObject.GetComponent<Cell>();
                 cell.Initialize(_maxDepth, cellData.depth, _countHandler, cellData.hasGold);
-                cell.OnDigged += _countHandler.UseShovel;
+                cell.OnCellDigged += _countHandler.UseShovel;
 
-                // Добавляем клетку в список
-                Debug.Log($"From GridFill InitGrid cell num{i} transform: {cell.transform.position}");
                 cells.Add(cell);
             }
-
-            // Теперь запускаем процесс спауна золота для клеток, где оно нужно
         }
         else
         {
@@ -71,10 +67,8 @@ public class GridFill : MonoBehaviour
 
     public void DataGridSpawnGold(RewardManager rewardManager)
     {
-        // Находим все клетки в сцене
         Cell[] cellsInScene = FindObjectsOfType<Cell>();
-
-        // Проходим по клеткам и спауним золото, если оно должно быть там
+   
         foreach (Cell cell in cellsInScene)
         {
             if (cell.HasGold())
@@ -83,7 +77,7 @@ public class GridFill : MonoBehaviour
                 Debug.Log("Cell transform from DataGridSpawnGold: " + cell.transform);
                 rewardManager.HandleGoldSpawn(cell.transform);
 
-                // Присваиваем золото клетке
+               
                 cell.AssignGold();
             }
         }
@@ -95,10 +89,10 @@ public class GridFill : MonoBehaviour
 
         foreach (var cell in cells)
         {
-            bool hasGold = cell.HasGold();  // Проверяем, есть ли золото в клетке
-            int depth = cell.GetDepth();    // Получаем глубину клетки
+            bool hasGold = cell.HasGold();  
+            int depth = cell.GetDepth();    
 
-            cellDataList.Add(new CellData(depth, hasGold)); // Сохраняем данные клетки
+            cellDataList.Add(new CellData(depth, hasGold)); 
         }
 
         return cellDataList;

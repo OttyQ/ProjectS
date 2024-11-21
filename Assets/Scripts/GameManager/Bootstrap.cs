@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class Bootstrap : MonoBehaviour
@@ -21,6 +18,7 @@ public class Bootstrap : MonoBehaviour
     private SaverLoader saverLoader;
     private GameSaveData gameSaveData;
     private Config config;
+
     private void Awake()
     {
         config = GameConfigProvider.instance.GameConfig;
@@ -32,37 +30,15 @@ public class Bootstrap : MonoBehaviour
         UnsubscribeEvents();
     }
 
-    public void OnApplicationQuit()
-    {
-        Debug.Log("On application quit awake!");
-        GameSaveData saveData = new GameSaveData
-        {
-            shovels = countHandler.GetRemainingShovels(),
-            collectedGold = countHandler.GetCollectedRewards(),
-            cells = gridFill.GetCellsData() // Собираем данные о клетках
-        };
-
-        saverLoader.SaveGame(saveData);
-    }
-
+    public void OnApplicationQuit() => SaveData();
     public void OnApplicationPause(bool pause)
     {
-        if (pause)
-        {
-            Debug.Log("On application quit awake!");
-            GameSaveData saveData = new GameSaveData
-            {
-                shovels = countHandler.GetRemainingShovels(),
-                collectedGold = countHandler.GetCollectedRewards(),
-                cells = gridFill.GetCellsData() // Собираем данные о клетках
-            };
-
-            saverLoader.SaveGame(saveData);
-        }
+        if (pause) SaveData();
     }
+
     private void RestartGame()
     {
-        Debug.Log("Bootstrap restartGame starts!");
+        Debug.Log("Bootstrap restarting game...");
         saverLoader.DeleteSaveFile();
         UnsubscribeEvents();
         InitializeGame();
@@ -70,76 +46,91 @@ public class Bootstrap : MonoBehaviour
 
     public void InitializeGame()
     {
-        Debug.Log("Запуск инициализации");
+        Debug.Log("Initializing game...");
         AssignDependencies();
         if (gameSaveData != null)
         {
-            Debug.Log("Bootstrap initialize from gameData");
+            Debug.Log("Initializing from saved data...");
             InitialFromSaveData();
         }
         else
         {
-            Debug.Log("Bootstrap initialize from config");
+            Debug.Log("Initializing from config...");
             InitialFromConfig();
         }
         SubscribeEvents();
-        Debug.Log("Инициализация закончена");
+        Debug.Log("Initialization complete.");
+    }
+
+    private void SaveData()
+    {
+        Debug.Log("Saving game data...");
+        GameSaveData saveData = new GameSaveData
+        {
+            shovels = countHandler.GetRemainingShovels(),
+            collectedGold = countHandler.GetCollectedRewards(),
+            cells = gridFill.GetCellsData()
+        };
+
+        saverLoader.SaveGame(saveData);
     }
 
     private void InitialFromConfig()
     {
         countHandler.Initialize(config.initialShovelCount, config.requiredGoldBars);
-        rewardManager.Initialize(config.goldSpawnChance, config.goldSpawnChanceIncrement, goldPrefab);
-        gridFill.Initialize(gridParent, cellPrefab, config.maxDepth, countHandler);
+        InitializeCommon();
         gridFill.InitializeGrid(config.fieldSize);
-        gameState.Initialize(winMenu, countHandler);
     }
 
     private void InitialFromSaveData()
     {
         countHandler.Initialize(gameSaveData.shovels, config.requiredGoldBars, gameSaveData.collectedGold);
-        rewardManager.Initialize(config.goldSpawnChance, config.goldSpawnChanceIncrement, goldPrefab);
-        gridFill.Initialize(gridParent, cellPrefab, config.maxDepth, countHandler);
+        InitializeCommon();
         gridFill.InitializeGridFromData(gameSaveData.cells, rewardManager);
-
         gridFill.DataGridSpawnGold(rewardManager);
-        gameState.Initialize(winMenu, countHandler);
     }
-    
+
+    private void InitializeCommon()
+    {
+        rewardManager.Initialize(config.goldSpawnChance, config.goldSpawnChanceIncrement, goldPrefab);
+        gameState.Initialize(winMenu, countHandler);
+        gridFill.Initialize(gridParent, cellPrefab, config.maxDepth, countHandler);
+    }
 
     private void AssignDependencies()
     {
-        //Находим или назначаем компоненты, если они не заданы
         countHandler ??= GetComponent<CountHandler>();
         view ??= GetComponent<View>();
         rewardManager ??= GetComponent<RewardManager>();
         bag ??= FindObjectOfType<UIBag>();
         gameState ??= GetComponent<GameState>();
-        saverLoader??= GetComponent<SaverLoader>();
+        saverLoader ??= GetComponent<SaverLoader>();
         gameSaveData = saverLoader.LoadGame();
-        Debug.Log($"If GameSaveData: {gameSaveData == null}" );
+        Debug.Log($"GameSaveData loaded: {gameSaveData != null}");
     }
 
-    private void SubscribeEvents()
+    private void ConfigureEvents(bool subscribe)
     {
-        //Подписка на события
-        rewardManager.SubscribeToCellEvents(FindObjectsOfType<Cell>());
-        countHandler.AllRewardCollected += gameState.Win;
-        countHandler.OnShovelCountChanged += view.UpdateShovelCount;
-        countHandler.OnRewardCountChanged += view.UpdateRewardCount;
-        bag.OnGoldAddedToBag += countHandler.CollectReward;
-        gameState.OnGameRestart += RestartGame;
-
-        countHandler.UpdateView();
+        if (subscribe)
+        {
+            rewardManager.SubscribeToCellEvents(FindObjectsOfType<Cell>());
+            countHandler.OnAllRewardCollected += gameState.Win;
+            countHandler.OnShovelCountChanged += view.UpdateShovelCount;
+            countHandler.OnRewardCountChanged += view.UpdateRewardCount;
+            bag.OnGoldAddedToBag += countHandler.CollectReward;
+            gameState.OnGameRestart += RestartGame;
+            countHandler.UpdateView();
+        }
+        else
+        {
+            countHandler.OnAllRewardCollected -= gameState.Win;
+            countHandler.OnShovelCountChanged -= view.UpdateShovelCount;
+            countHandler.OnRewardCountChanged -= view.UpdateRewardCount;
+            bag.OnGoldAddedToBag -= countHandler.CollectReward;
+            gameState.OnGameRestart -= RestartGame;
+        }
     }
 
-    private void UnsubscribeEvents()
-    {
-        //Отписка от событий
-        countHandler.AllRewardCollected -= gameState.Win;
-        countHandler.OnShovelCountChanged -= view.UpdateShovelCount;
-        countHandler.OnRewardCountChanged -= view.UpdateRewardCount;
-        bag.OnGoldAddedToBag -= countHandler.CollectReward;
-        gameState.OnGameRestart -= RestartGame;
-    }
+    private void SubscribeEvents() => ConfigureEvents(true);
+    private void UnsubscribeEvents() => ConfigureEvents(false);
 }

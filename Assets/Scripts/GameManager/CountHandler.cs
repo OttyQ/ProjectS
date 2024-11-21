@@ -6,7 +6,7 @@ public class CountHandler : MonoBehaviour
 {
     public event Action<int> OnShovelCountChanged;            
     public event Action<int, int> OnRewardCountChanged;       
-    public event Action AllRewardCollected;                   
+    public event Action OnAllRewardCollected;                   
 
     private int _countShovels;                               
     private int _collectedRewards = 0;                           
@@ -31,9 +31,10 @@ public class CountHandler : MonoBehaviour
         {
             _countShovels--;
             OnShovelCountChanged?.Invoke(_countShovels);
-            if(_countShovels == 0)
+
+            if (_countShovels == 0)
             {
-                Debug.Log("Лопатки закончились");
+                Debug.Log("We're out of shovels.");
             }
         }
     }
@@ -45,11 +46,10 @@ public class CountHandler : MonoBehaviour
             _collectedRewards++;
             OnRewardCountChanged?.Invoke(_collectedRewards, _requiredRewards);
 
-            // Проверка, достигли ли необходимого количества наград
             if (_collectedRewards == _requiredRewards)
             {
-                AllRewardCollected?.Invoke();
-                Debug.Log("Все награды собраны!");
+                Debug.Log("All awards are collected!");
+                OnAllRewardCollected?.Invoke();
             }
         }
     }

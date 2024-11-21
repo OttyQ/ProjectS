@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class FlexibleGrid : LayoutGroup
 {
-
     public int rows;
     public int columns;
     public UnityEngine.Vector2 cellSize;

@@ -9,20 +9,20 @@ public class SaverLoader : MonoBehaviour
 
     public void SaveGame(GameSaveData saveData)
     {
-        Debug.Log("Запись в save");
+        Debug.Log("Write to save");
         string json = JsonUtility.ToJson(saveData);
         File.WriteAllText(SavePath, json);
     }
 
     public GameSaveData LoadGame()
     {
-        Debug.Log("Загрузка сохранения");
+        Debug.Log("Loading a save...");
         if (!File.Exists(SavePath))
         {
-            Debug.Log("Net faila!");
+            Debug.Log("File not found!");
             return null;
         }
-        Debug.Log("Файл найден!");
+        Debug.Log("File found!");
         string json = File.ReadAllText(SavePath);
         return JsonUtility.FromJson<GameSaveData>(json);
     }
@@ -32,11 +32,11 @@ public class SaverLoader : MonoBehaviour
         if (File.Exists(SavePath))
         {
             File.Delete(SavePath);
-            Debug.Log("Файл сохранения удалён.");
+            Debug.Log("The save file was deleted.");
         }
         else
         {
-            Debug.Log("Файл сохранения не найден.");
+            Debug.Log("File not found!");
         }
     }
 
