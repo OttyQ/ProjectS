@@ -2,10 +2,20 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Класс для управления клеткой, с возможностью копать.
+/// </summary>
 public class Cell : MonoBehaviour, IPointerClickHandler
 {
-    public event Func<Transform, bool> GoldDigged; //Событие при попытке выкопать золото
-    public event Action OnCellDigged; //Событие при копке клетки
+    /// <summary>
+    /// Событие, которое срабатывает, при выкопке золото.
+    /// </summary>
+    public event Func<Transform, bool> GoldDigged;
+
+    /// <summary>
+    /// Событие, которое срабатывает, когда клетка была вырыта.
+    /// </summary>
+    public event Action OnCellDigged;
 
     private int _maxDepth;
     private int _currentDepth;
@@ -15,6 +25,13 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     private CellRenderer cellRenderer;
     private CountHandler countHandler;
 
+    /// <summary>
+    /// Инициализация клетки с заданными параметрами.
+    /// </summary>
+    /// <param name="maxDepth">Максимальная глубина для копки.</param>
+    /// <param name="currentDepth">Текущая глубина копки.</param>
+    /// <param name="countHandler">Обработчик счета для отслеживания оставшихся лопат.</param>
+    /// <param name="hasGold">Флаг, указывающий, есть ли золото в клетке.</param>
     public void Initialize(int maxDepth, int currentDepth, CountHandler countHandler, bool hasGold)
     {
         _maxDepth = maxDepth;
@@ -24,11 +41,6 @@ public class Cell : MonoBehaviour, IPointerClickHandler
 
         cellRenderer = GetComponent<CellRenderer>();
         cellRenderer?.Initialize(maxDepth, currentDepth);
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        Dig();
     }
 
     private void Start()
@@ -41,13 +53,18 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         UnsubscribeFromRewardEvents();
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Dig();
+    }
+
     private void Dig()
     {
         if (!CanDig()) return;
 
         _currentDepth--;
         Debug.Log($"Current depth: {_currentDepth}");
-        cellRenderer?.UpdateColor(_currentDepth);
+        cellRenderer?.UpdateColor(_currentDepth); //Обновление визуального отображения клетки.
 
         if (GoldDigged?.Invoke(transform) == true)
         {
@@ -57,11 +74,17 @@ public class Cell : MonoBehaviour, IPointerClickHandler
         OnCellDigged?.Invoke();
     }
 
+    /// <summary>
+    /// Проверяет, можно ли копать в этой клетке.
+    /// </summary>
     private bool CanDig()
     {
         return !_hasGold && _currentDepth > 0 && countHandler.GetRemainingShovels() > 0;
     }
 
+    /// <summary>
+    /// Назначает золото для этой клетки, если оно есть.
+    /// </summary>
     public void AssignGold()
     {
         rewardItemOnCell = GetComponentInChildren<RewardItem>();

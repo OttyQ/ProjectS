@@ -1,6 +1,10 @@
-using System;
 using UnityEngine;
 
+
+/// <summary>
+/// Класс для инициализации.
+/// Включает в себя загрузку сохраненных данных, настройку зависимостей, сохранение данных и подписку на события.
+/// </summary>
 public class Bootstrap : MonoBehaviour
 {
     [Header("Req Elements")]
@@ -90,6 +94,9 @@ public class Bootstrap : MonoBehaviour
         gridFill.DataGridSpawnGold(rewardManager);
     }
 
+    /// <summary>
+    /// Общая инициализация элементов игры, не зависящая от конфигурации или сохраненных данных.
+    /// </summary>
     private void InitializeCommon()
     {
         rewardManager.Initialize(config.goldSpawnChance, config.goldSpawnChanceIncrement, goldPrefab);
@@ -109,11 +116,14 @@ public class Bootstrap : MonoBehaviour
         Debug.Log($"GameSaveData loaded: {gameSaveData != null}");
     }
 
+    /// <summary>
+    /// Подписка/отписка на события в зависимости от флага.
+    /// </summary>
     private void ConfigureEvents(bool subscribe)
     {
         if (subscribe)
         {
-            rewardManager.SubscribeToCellEvents(FindObjectsOfType<Cell>());
+            rewardManager.SubscribeToCellEvents(gridFill.GetCells());
             countHandler.OnAllRewardCollected += gameState.Win;
             countHandler.OnShovelCountChanged += view.UpdateShovelCount;
             countHandler.OnRewardCountChanged += view.UpdateRewardCount;

@@ -1,15 +1,24 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.WebSockets;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Представляет игровую сумку (мешок) для сбора золотых наград.
+/// Реализует функционал обработки перемещения объектов />.
+/// </summary>
 public class UIBag : MonoBehaviour, IDropHandler
 {
-    
-    public event Action OnGoldAddedToBag; //to countHandler
+    /// <summary>
+    /// Событие, вызываемое при добавлении золота в сумку.
+    /// Подписчик (countHandler) использует его для обновления количества собранных наград.
+    /// </summary>
+    public event Action OnGoldAddedToBag;
 
+    /// <summary>
+    /// Вызывается, когда объект перетаскивается и отпускается над сумкой.
+    /// Проверяет, является ли отпущенный объект золотом, 
+    /// перемещает его в сумку и вызывает событие добавления золота.
+    /// </summary>
     public void OnDrop(PointerEventData eventData)
     {
         Debug.Log("Bag OnDrop activate");

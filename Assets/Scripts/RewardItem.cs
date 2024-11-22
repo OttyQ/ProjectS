@@ -2,6 +2,10 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+
+/// <summary>
+/// Класс для управления взаимодействием с предметом награды (золота), который можно перетаскивать.
+/// </summary>
 public class RewardItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     public event Action onGoldSpawned;
@@ -54,6 +58,9 @@ public class RewardItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         return _rectTransform.parent == _uiBag.transform;
     }
 
+    /// <summary>
+    /// Обрабатывает ситуацию, когда золото было сброшено в сумку.
+    /// </summary>
     private void HandleGoldDroppedInBag()
     {
         Debug.Log("RewItem: Gold moved to the bag.");
@@ -61,6 +68,9 @@ public class RewardItem : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Восстанавливает исходное положение золота, если он не был сброшен в сумку.
+    /// </summary>
     private void ResetPosition()
     {
         Debug.Log("RewItem: Gold returned to the cell.");

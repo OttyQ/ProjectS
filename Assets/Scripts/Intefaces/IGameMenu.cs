@@ -5,5 +5,4 @@ using UnityEngine;
 public interface IGameMenu
 {
     void Setup(int score);
-    void RestartButton();
 }

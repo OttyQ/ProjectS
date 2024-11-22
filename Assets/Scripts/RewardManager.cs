@@ -1,6 +1,11 @@
 using System;
 using UnityEngine;
 
+
+/// <summary>
+///  ласс дл€ управлени€ логикой спауна золота в игре.
+/// ќбрабатывает шанс по€влени€ золота в клетке и управл€ет его спауном.
+/// </summary>
 public class RewardManager : MonoBehaviour
 {
     private float _spawnChance;
@@ -26,6 +31,10 @@ public class RewardManager : MonoBehaviour
         UnsubscribeFromCellEvents(FindObjectsOfType<Cell>());
     }
 
+    /// <summary>
+    /// ѕодписка на событи€ клеток дл€ попытки спавна золото при вскапывании клетки.
+    /// </summary>
+    /// <param name="cells">ћассив клеток</param>
     public void SubscribeToCellEvents(Cell[] cells)
     {
         foreach (var cell in cells)
@@ -44,6 +53,9 @@ public class RewardManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ѕытаетс€ заспавнить золото в клетке. ≈сли золото не по€вл€етс€, увеличивает шанс его по€влени€.
+    /// </summary>
     private bool TrySpawnGold(Transform cell)
     {
         if (IsGoldSpawned())
@@ -74,6 +86,9 @@ public class RewardManager : MonoBehaviour
         Debug.Log($"Spawn chance reset to default: {_defaultSpawnChance:F2}");
     }
 
+    /// <summary>
+    /// –учной спавн золота в клетке. »спользуетс€ при загрузке игры.
+    /// </summary>
     public void HandleGoldSpawn(Transform cell)
     {
         Debug.Log("Handle spawn gold!");

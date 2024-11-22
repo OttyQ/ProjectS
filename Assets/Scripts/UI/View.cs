@@ -1,8 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+
+/// <summary>
+/// Класс, отвечающий за обновление UI-элементов на экране игры,
+/// таких как счетчик собранных наград и оставшихся лопат.
+/// </summary>
 public class View : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI rewardCounterText;

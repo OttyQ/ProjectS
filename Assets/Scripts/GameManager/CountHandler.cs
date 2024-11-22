@@ -2,10 +2,25 @@ using System;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Отвечает за управление игровыми счетчиками, такими как количество оставшихся лопат и собранных наград.
+/// </summary>
 public class CountHandler : MonoBehaviour
 {
-    public event Action<int> OnShovelCountChanged;              
-    public event Action<int, int> OnRewardCountChanged;       
+    /// <summary>
+    /// Событие, вызываемое при изменении количества оставшихся лопат.
+    /// </summary>
+    public event Action<int> OnShovelCountChanged;
+
+    /// <summary>
+    /// Событие, вызываемое при изменении количества собранных наград.
+    /// Передает текущее количество собранных наград и требуемое количество.
+    /// </summary>
+    public event Action<int, int> OnRewardCountChanged;
+
+    /// <summary>
+    /// Событие, вызываемое при сборе всех наград.
+    /// </summary>
     public event Action OnAllRewardCollected;                   
 
     private int _countShovels;                               

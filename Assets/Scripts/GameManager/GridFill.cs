@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+
+/// <summary>
+/// Класс для управления инициализацией и очисткой сетки клеток.
+/// Включает методы для создания клеток, загрузки данных сетки и установки золота в клетки.
+/// </summary>
 public class GridFill : MonoBehaviour
 {
     private Transform gridParent;
@@ -20,6 +25,10 @@ public class GridFill : MonoBehaviour
         _countHandler = countHandler;
     }
 
+    /// <summary>
+    /// Заполнение сетки клетками с заданным размером поля.
+    /// </summary>
+    /// <param name="fieldSize">Размер поля </param>
     public void InitializeGrid(int fieldSize)
     {
         ClearGrid();
@@ -31,15 +40,6 @@ public class GridFill : MonoBehaviour
             cell.Initialize(_maxDepth,_maxDepth, _countHandler, false);
             cells.Add(cell);   
         }
-    }
-
-    public void ClearGrid()
-    {
-        foreach (var cell in cells)
-        {
-            Destroy(cell.gameObject);
-        }
-        cells.Clear();
     }
 
     public void InitializeGridFromData(List<CellData> cellDataList, RewardManager rewardManager)
@@ -67,13 +67,10 @@ public class GridFill : MonoBehaviour
 
     public void DataGridSpawnGold(RewardManager rewardManager)
     {
-        Cell[] cellsInScene = FindObjectsOfType<Cell>();
-   
-        foreach (Cell cell in cellsInScene)
+        foreach (Cell cell in cells)
         {
             if (cell.HasGold())
             {               
-                Debug.Log("Cell transform from DataGridSpawnGold: " + cell.transform);
                 rewardManager.HandleGoldSpawn(cell.transform);
 
                 cell.AssignGold();
@@ -81,6 +78,19 @@ public class GridFill : MonoBehaviour
         }
     }
 
+    public void ClearGrid()
+    {
+        foreach (var cell in cells)
+        {
+            Destroy(cell.gameObject);
+        }
+        cells.Clear();
+    }
+
+    /// <summary>
+    /// Получение данных о клетках для сохранения игры.
+    /// </summary>
+    /// <returns>Список данных о клетках, включая глубину и наличие золота.</returns>
     public List<CellData> GetCellsData()
     {
         List<CellData> cellDataList = new List<CellData>();
@@ -94,6 +104,11 @@ public class GridFill : MonoBehaviour
         }
 
         return cellDataList;
+    }
+
+    public Cell[] GetCells()
+    {
+        return cells.ToArray();
     }
 }
 

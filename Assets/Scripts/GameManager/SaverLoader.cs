@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -7,6 +5,10 @@ public class SaverLoader : MonoBehaviour
 {
     private string SavePath => Path.Combine(Application.persistentDataPath, "savegame.json");
 
+    /// <summary>
+    /// Сохраняет данные игры в файл.
+    /// </summary>
+    /// <param name="saveData">Объект, содержащий данные для сохранения.</param>
     public void SaveGame(GameSaveData saveData)
     {
         Debug.Log("Write to save");
@@ -15,6 +17,10 @@ public class SaverLoader : MonoBehaviour
         File.WriteAllText(SavePath, json);
     }
 
+    /// <summary>
+    /// Загружает данные игры из файла.
+    /// </summary>
+    /// <returns>Объект с загруженными данными игры или null, если файл не найден.</returns>
     public GameSaveData LoadGame()
     {
         Debug.Log("Loading a save...");
@@ -28,6 +34,9 @@ public class SaverLoader : MonoBehaviour
         return JsonUtility.FromJson<GameSaveData>(json);
     }
 
+    /// <summary>
+    /// Удаляет файл сохранения, если он существует.
+    /// </summary>
     public void DeleteSaveFile()
     {
         if (File.Exists(SavePath))

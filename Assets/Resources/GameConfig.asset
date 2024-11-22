@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fieldSize: 4
   _maxDepth: 4
-  _initialShovelCount: 20
+  _initialShovelCount: 30
   _requiredGoldBars: 10
   _goldSpawnChance: 0.3
   _goldSpawnChanceIncrement: 0.1
