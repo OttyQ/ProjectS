@@ -7,8 +7,8 @@ using UnityEngine.EventSystems;
 
 public class UIBag : MonoBehaviour, IDropHandler
 {
-    //public event Action<bool> OnGoldRemoved;
-    public event Action OnGoldAddedToBag; //to countHelper
+    
+    public event Action OnGoldAddedToBag; //to countHandler
 
     public void OnDrop(PointerEventData eventData)
     {

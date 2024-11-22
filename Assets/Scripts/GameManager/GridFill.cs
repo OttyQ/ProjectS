@@ -72,12 +72,10 @@ public class GridFill : MonoBehaviour
         foreach (Cell cell in cellsInScene)
         {
             if (cell.HasGold())
-            {
-               
+            {               
                 Debug.Log("Cell transform from DataGridSpawnGold: " + cell.transform);
                 rewardManager.HandleGoldSpawn(cell.transform);
 
-               
                 cell.AssignGold();
             }
         }

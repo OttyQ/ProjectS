@@ -10,6 +10,7 @@ public class SaverLoader : MonoBehaviour
     public void SaveGame(GameSaveData saveData)
     {
         Debug.Log("Write to save");
+        Debug.Log($"Save path:{SavePath}");
         string json = JsonUtility.ToJson(saveData);
         File.WriteAllText(SavePath, json);
     }

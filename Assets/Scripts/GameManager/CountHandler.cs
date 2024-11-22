@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class CountHandler : MonoBehaviour
 {
-    public event Action<int> OnShovelCountChanged;            
+    public event Action<int> OnShovelCountChanged;              
     public event Action<int, int> OnRewardCountChanged;       
     public event Action OnAllRewardCollected;                   
 
     private int _countShovels;                               
     private int _collectedRewards = 0;                           
-    private int _requiredRewards;                            
+    private int _requiredRewards;
 
+    /// <summary>
+    /// Инициализация счетчиков.
+    /// </summary>
     public void Initialize(int countShovels,int requiredRewards, int collectedRewards = 0)
     {
         _countShovels = countShovels;
@@ -19,6 +22,9 @@ public class CountHandler : MonoBehaviour
         _collectedRewards = collectedRewards;
     }
 
+    /// <summary>
+    /// Обновление UI элемнтов с текущими значениями.
+    /// </summary>
     public void UpdateView()
     {
         OnShovelCountChanged?.Invoke(_countShovels);
